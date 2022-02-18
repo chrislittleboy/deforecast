@@ -8,11 +8,8 @@ library(parallel)
 select <- dplyr::select
 
 setwd("/home/chris/Documents/data/deforecast")
-# loads protected area
-pa <- read_sf("./processed/pa/pa_polygon.shp") # loads protected shape files
-pa <- split(pa, seq(nrow(pa))) # splits to list
 #loads 2001 LC
-lc <- raster("./processed//lc/fc2001.tif") # loads lc raster
+lc <- raster("./processed//lc/fc2020.tif") # loads lc raster
 #loads population
 pop <- raster("./raw/ls2001/lspop2001/w001001.adf") # loads pop raster
 
@@ -51,11 +48,22 @@ buildingbricks <- function(x) {
   pops <- resample(pops, template_raster, method = "ngb")
   parea <- fasterize(xpa,pops)
   b <- brick(parea,lcs,pops)
-  writeRaster(x = b, filename = paste0("./processed/brick/",id,".tif"), overwrite = T)
+  writeRaster(x = b, filename = paste0("./processed/brick2020/",id,".tif"), overwrite = T)
   return(b)
 }
 
+calibration_forests <- list.files("/home/chris/Documents/data/deforecast/results/calibration/1/")
+calibration_forests <- gsub(".csv", "", calibration_forests)
+pa <- read_sf("./processed/pa/pa_polygon.shp") # loads protected shape files
+pa_calibration <- pa[pa$WDPAID %in% calibration_forests,]
+pa_calibration <- split(pa_calibration, seq(nrow(pa_calibration)))
+
+# loads protected area
+pa <- split(pa, seq(nrow(pa))) # splits to list
+
 # splits pas into manageable chunks for computing
+
+
 pa1 <- pa[1:999]
 pa2 <- pa[1000:1999]
 pa3 <- pa[2000:2999]
@@ -77,33 +85,35 @@ pa17 <- pa[16000:16794]
 # lays the bricks. 
 # Mclapply doesn't work on windows but can be replaced with lapply or parLapply
 
-mclapply(pa1, FUN = buildingbricks)
-mclapply(pa2, FUN = buildingbricks)
-mclapply(pa3, FUN = buildingbricks)
-mclapply(pa4, FUN = buildingbricks)
-mclapply(pa5, FUN = buildingbricks)
-mclapply(pa6, FUN = buildingbricks)
-mclapply(pa7, FUN = buildingbricks)
-mclapply(pa8, FUN = buildingbricks)
-mclapply(pa9, FUN = buildingbricks)
-mclapply(pa10, FUN = buildingbricks)
-mclapply(pa11, FUN = buildingbricks)
-mclapply(pa12, FUN = buildingbricks)
-mclapply(pa13, FUN = buildingbricks)
-mclapply(pa14, FUN = buildingbricks)
-mclapply(pa15, FUN = buildingbricks)
-mclapply(pa16, FUN = buildingbricks)
-mclapply(pa17, FUN = buildingbricks)
-
+mclapply(pa1, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa2, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa3, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa4, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa5, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa6, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa7, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa8, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa9, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa10, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa11, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa12, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa13, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa14, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa15, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa16, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa17, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa_calibration, FUN = buildingbricks, mc.cores = 8)
+mclapply(pa_again, FUN = buildingbricks, mc.cores = 6)
 # This takes ages (overnight) and sometimes crashes (esp for forests with strange geometries). 
 # The following code finds the unprocessed forests and reruns.
 # I had to rerun many times after the first 15000ish forests completed in the first go
 
 ids <- read_sf("./processed/pa/pa_centroid.shp") %>% st_drop_geometry() %>% 
   select(WDPAID) %>% mutate(index = 1:16794, id = as.character(WDPAID)) 
-done <- list.files("./processed/brick/")
+done <- list.files("./processed/brick2020/")
 done <- gsub(".tif", "", done)
 '%!in%' <- function(x,y)!('%in%'(x,y))
 notdone <- filter(ids, id %!in% done)
 pa_again <- filter(pa, WDPAID %in% notdone$WDPAID)
 pa_again <- split(pa_again, seq(nrow(pa_again))) # splits to list
+buildingbricks(pa_again[[2]])

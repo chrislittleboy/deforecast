@@ -7,7 +7,7 @@ library(sf)
 
 setwd("/home/chris/Documents/data/deforecast/")
 #loads protected areas
-pa <- read_sf("./processed/pa/pa_polygon.shp") %>% st_geometry()
+pa <- read_sf("./processed/pa/pa_polygon.shp")
 
 #gets criteria for deciding forest groupings
 setwd("./raw/forestcriteria/")
@@ -25,14 +25,14 @@ v <- exact_extract(x, pa, "mean")
 return(v)
 }
 
-res <- lapply(rasters, FUN = get_values)
+res <- mclapply(rasters, FUN = get_values, mc.cores = 8)
 # stores the results
 results <- cbind(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]])
 
 # performs the kmeans analysis (10 clusters, normalised results)
 kmean_f <- kmeans(scale(results), 10)
-results <- data.frame(cbind(results, as.factor(kmean_f$cluster)))
-colnames(results) <- c("soil", "t_m", "p_m", "t_s", "p_s", "cluster")
+results <- data.frame(cbind(pa$WDPAID,results, as.factor(kmean_f$cluster)))
+colnames(results) <- c("id", "soil", "t_m", "p_m", "t_s", "p_s", "cluster")
 write.csv(results, file = "/home/chris/Documents/data/deforecast/results/cluster/10kmeans")
 # creates a summary table for those interested...
 

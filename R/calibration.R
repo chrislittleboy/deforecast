@@ -3,7 +3,7 @@
 #' @param params a data frame of all combinations to calibrate model
 #' @param x a 4 member list with ids, location of people, protected and unprotected trees
 
-calibration <- function(x, params, years){
+calibration <- function(x, params, years, calibration_round){
 
 x <- readRDS(file = paste0("/home/chris/Documents/data/deforecast/processed/inputlists/",x,".RData"));
 id <- x[[1]]
@@ -20,6 +20,7 @@ res <- deforecast(
            ydim = NULL,
            explicit = TRUE, 
            ppl_loc = ppl_loc,
+           ppl_scaling = as.numeric(params[i,9]),
            p_loc = p_loc, 
            np_loc = np_loc,
            mean_age = as.numeric(substr(params[i,4],1,2)),
@@ -36,7 +37,8 @@ res <- deforecast(
            maturity = as.numeric(substr(params[i,3], 1,2)), 
            max_age = as.numeric(substr(params[i,3], 4,5)),
            dispersion = as.numeric(params[i,5]),
-           years = years)
+           years = years,
+           calibration_round)
 
 # unprotected at start
 p_s <- sum(res[[2]][[1]][,4]) # trees/year1/protected column == 1
@@ -68,6 +70,5 @@ colnames(results) <- c("wdpaid",
                        "unprotected_forest_growth")
 i <- i + 1;
 }
-write.csv(results, file = paste0("/home/chris/Documents/data/deforecast/results/calibration/1/",id,".csv"))
-return(results);
+write.csv(results, file = paste0("/home/chris/Documents/data/deforecast/calibration/",calibration_round,"/resultsbyforest/",id,".csv"))
 }

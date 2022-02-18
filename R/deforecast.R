@@ -6,6 +6,7 @@
 #' @param explicit If FALSE, places people and trees randomly on the landscape. If TRUE takes input data.
 #' 
 #' @param ppl_loc Only if explicit_people is TRUE. A 4 column matrix with id, x/y locations and budget.
+#' @param ppl_scaling Only if explicit_people is TRUE. A number between 0 and 1 to scale down the # of people on the map.
 #' @param ppl_n Only if explicit_people is FALSE. The number of people on the landscape.
 #'
 #' @param xdim Size of landscape on x axis.
@@ -45,6 +46,7 @@ deforecast <- function(
                        ydim = 1000,
                        explicit = FALSE, 
                        ppl_loc = NULL, 
+                       ppl_scaling = 1,
                        ppl_n = 1000,
                        budget = 1000,
                        p_loc = NULL, 
@@ -73,8 +75,8 @@ if(explicit == FALSE) {
       ppl_n = ppl_n); # makes the people
 } else { 
   people <- get_people(
-    ppl_loc = ppl_loc # or gets the people
-    )
+    ppl_loc = ppl_loc, # or gets the people
+    ppl_scaling = ppl_scaling)
   }
 if(explicit == FALSE){
   trees <- make_trees(

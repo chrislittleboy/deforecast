@@ -10,7 +10,6 @@ mat_max <- c("10/90")
 age_sd <- c("50/25")
 # how far seeds go
 dispersion <- c("5")
-
 # people variables
 
 # cost to travel on landscape
@@ -20,6 +19,5 @@ mobility <- c("10", "30")
 # value of a tree
 value <- c("400", "500", "700", "1000")
 
-params1 <- expand.grid(k,r,mat_max,age_sd,dispersion,travel,mobility,value)
-setwd("/home/chris/Documents/data/deforecast/processed/")
-write.csv(params1, file = "./params/params1")
+params <- expand.grid(k,r,mat_max,age_sd,dispersion,travel,mobility,value)
+write.csv(params1, file = paste0("/home/chris/Documents/data/deforecast/calibration/", calibration_round, "/params.csv"))
