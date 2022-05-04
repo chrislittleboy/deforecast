@@ -1,6 +1,6 @@
 library(tidyverse)
-library(deforecasteR)
 library(parallel)
+library(deforecasteR)
 chop <- deforecasteR::chop
 # we need the clusters, the lists of forest ids
 
@@ -9,7 +9,6 @@ clusters <- read.csv("/home/chris/Documents/data/deforecast/results/cluster/10km
 # sample_clusters <- clusters %>% group_by(cluster) %>% slice_sample(n=10)
 # write.csv(sample_clusters,"/home/chris/Documents/data/deforecast/results/cluster/sampleclusters.csv")
 sample_clusters <- unique(clusters[clusters$id %in% actual$id,])
-calib_list <- read.csv("/home/chris/Documents/data/deforecast/results/cluster/sampleclusters.csv")
 calib_list <- list.files("/home/chris/Documents/data/deforecast/processed/inputlists")
 calib_list <- gsub(pattern = ".RData", "", calib_list)
 calib_list <- calib_list[calib_list %in% sample_clusters$id]
@@ -29,7 +28,7 @@ docalibration <- function(calibration_round, # integer
 
 dir.create(path = paste0("/home/chris/Documents/data/deforecast/calibration/", calibration_round))
 dir.create(path = paste0("/home/chris/Documents/data/deforecast/calibration/", calibration_round, "/resultsbyforest"))
-params <- expand.grid(k,r,mat_max,age_sd,dispersion,travel,mobility,value,ppl_scaling)
+params <- expand.grid(k,r,mat_max,age_sd,dispersion,travel,mobility,value,ppl_scaling, stringsAsFactors = F)
 
 # this is where the work is done. Calibration is run on each of the forests in calib_list.
 # this outputs the results by forest in a folder under ./calibration/##
@@ -47,7 +46,7 @@ results[,4] <- round(actual$t, 2)
 i <- 1
 while(i <= length(actual[,1])){
   id <- actual[i,1]
-  f <- read.csv(paste0("./1/resultsbyforest/",id,".csv"))[2:10] 
+  f <- read.csv(paste0("/home/chris/Documents/data/deforecast/calibration/",calibration_round, "/resultsbyforest/",id,".csv"))[2:10] 
   # gets calibration results outputed by 'calibration' 
   withactual <- merge(actual,f,by.x = "id", by.y = "wdpaid") %>% 
     # merges with actual deforestation for calibrated forests
@@ -78,7 +77,8 @@ while(i <= length(actual[,1])){
 colnames(results) <- c("id", "bestparam", "bestmodel", "actual", "rmse")
 results <- unique(merge(results, clusters))
 # finds clusters for each forest
-write.csv(results, paste0("/home/chris/Documents/data/deforecast/calibration/", calibration_round, "/calibrationresults.csv"))
+write.csv(results, paste0("/home/chris/Documents/data/deforecast/calibration/",calibration_round,"/calibrationresults.csv"))
+mean(results$rmse)
 }
 
 # iterations of this function for each round
@@ -99,11 +99,45 @@ docalibration(
   calibration_round = 2,
               k = c("1"),
               r = c("0.02"),
-              mat_max = "10/90",
-              age_sd = "50/25",
-              dispersion = "5",
+              mat_max = c("10/90"),
+              age_sd = c("50/25"),
+              dispersion = c("5"),
               travel = c("150"),
               mobility = c("10"),
               value = c("500"),
               ppl_scaling = c("0.1", "0.3", "0.4")
 )
+
+docalibration(
+  calibration_round = 3,
+  k = c("1"),
+  r = c("0.02"),
+  mat_max = c("10/90"),
+  age_sd = c("50/25"),
+  dispersion = c("5"),
+  travel = c("200"),
+  mobility = c("5"),
+  value = c("400"),
+  ppl_scaling = c("0.02", "0.05", "0.07")
+)
+
+docalibration(
+  calibration_round = 4,
+  k = c("1"),
+  r = c("0.015", "0.02","0.025"),
+  mat_max = c("10/90"),
+  age_sd = c("50/25"),
+  dispersion = c("5"),
+  travel = c("150","200","250"),
+  mobility = c("5", "10"),
+  value = c("300","400", "500"),
+  ppl_scaling = c("0.01", "0.015", "0.02")
+)
+
+
+library(nloptr)
+
+eval_f0 <- docalibration_optimisation
+actual <- actual[actual$id %in% test,]
+test <- list.files("/home/chris/Documents/data/deforecast/calibration/4/resultsbyforest/")
+test <- gsub(".csv", "", test)
