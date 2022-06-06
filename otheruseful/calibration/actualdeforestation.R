@@ -2,21 +2,14 @@
 library(tidyverse)
 library(parallel)
 library(raster)
-calibration_forests <- list.files("/home/chris/Documents/data/deforecast/calibration/1")
-calibration_forests <- gsub(".csv", "", calibration_forests)
-cf_list <- split(calibration_forests, seq(length(calibration_forests)))
 
 bricks_2001 <- list.files("/home/chris/Documents/data/deforecast/processed/brick2001/")
 bricks_2001 <- gsub(".tif", "", bricks_2001)
-bricks_2001 <- bricks_2001[bricks_2001 %in% calibration_forests]
 
 bricks_2020 <- list.files("/home/chris/Documents/data/deforecast/processed/brick2020/")
 bricks_2020 <- gsub(".tif", "", bricks_2020)
-bricks_2020 <- bricks_2020[bricks_2020 %in% calibration_forests]
 
-bricklist <- list.files("/home/chris/Documents/data/deforecast/processed/brick2020/")
-bricklist <- gsub(".tif", "", bricks_2020)
-bricklist <- split(bricklist, seq(length(bricklist)))
+bricklist <- split(bricks_2020, seq(length(bricks_2020)))
 
 getdeforestation <- function(x){
     fc_2001 <- brick(paste0("/home/chris/Documents/data/deforecast/processed/brick2001/",x,".tif"))[[1:2]]
@@ -31,9 +24,9 @@ getdeforestation <- function(x){
 return(c(count_2001, count_2020))
     }
 
-def <- mclapply(cf_list,getdeforestation, mc.cores = 8)
-results <- matrix(ncol = 5, nrow = 97)
-results[,1] <- as.numeric(calibration_forests)
+def <- mclapply(bricklist,getdeforestation, mc.cores = 8)
+results <- matrix(ncol = 5, nrow = length(bricklist))
+results[,1] <- as.numeric(unlist(bricklist))
 i <- 1
 while(i <= length(bricklist)) {
   results[i,2] <- def[[i]][1]

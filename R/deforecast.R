@@ -41,8 +41,7 @@
 #' 
 # This is the main function for the simulation. 
 
-deforecast <- function(
-                       xdim = 1000,
+deforecast <- function(xdim = 1000,
                        ydim = 1000,
                        explicit = FALSE, 
                        ppl_loc = NULL, 
