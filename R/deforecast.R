@@ -65,8 +65,6 @@ deforecast <- function(xdim = 1000,
                        dispersion = 5,
                        years = 10){
 
-print("Starting simulation ...")
-
 if(explicit == FALSE) {
     people <- make_people(
       xdim = xdim,
@@ -76,8 +74,8 @@ if(explicit == FALSE) {
   people <- get_people(
     ppl_loc = ppl_loc, # or gets the people
     ppl_scaling = ppl_scaling)
-  }
-if(explicit == FALSE){
+}
+    if(explicit == FALSE){
   trees <- make_trees(
       xdim = xdim,
       ydim = ydim,
@@ -99,7 +97,9 @@ if(explicit == FALSE){
 ppl_results <- vector(mode = "list", length = years + 1);
 tree_results <- vector(mode = "list", length = years + 1);
   
-# stores the initial conditions of the people and trees
+# stores the initial conditions of the people and trees 
+
+# controlling for if nobody is on the landscape
 
 ppl_results[[1]] <- people;
 tree_results[[1]] <- trees;
@@ -118,7 +118,6 @@ agebands <- c(maturity,aggregate(mature_age, by = list((mature_age[,2])), FUN = 
 
 while(t <= years){
 
-
 felled <- felling(
       people = people, 
       trees = trees, 
@@ -129,10 +128,9 @@ felled <- felling(
 
 people <- felled[[2]];
 ppl_results[[t+1]] <- people; # stores results
-
 trees <- felled[[1]];
+
 if(length(matrix(trees, ncol = 4)[,1]) == 0){
-  print("No more trees...");
   tree_results[[t+1]] <- NULL
 break;
   } else {
@@ -143,12 +141,12 @@ trees <- growth(trees = trees,
       maturity = maturity,
       max_age = max_age,
       dispersion = dispersion,
-      agebands = agebands); # grows the protected forest
+      agebands = agebands); # grows the forest
 
 tree_results[[t+1]] <- trees;
 }
-print(paste("Year", t, "done"))
 t <- t + 1; # onto the next year!
 }
 return(list(ppl_results,tree_results));
+
 }

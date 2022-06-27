@@ -18,12 +18,13 @@ growth <- function(trees,
   s <- n + (r * n) * (1 - n/k);
   r_l <- (s-n)/n;
     if (r_l < 0) {
-      print("Forest at capacity");
       return(trees);
   } else {  
-  probbands <- c(0, 0.02,0.05,0.09, 0.14,0.2,0.2,0.14,0.09, 0.05,0.02);
-  pnew <- probseed(trees[,3], agebands, probbands)
+  probbands <- c(0,dbinom(x = 1:10, size = 10, prob = 1/2));
+  pnew <- probseed(trees[,3], agebands, probbands);
   pnew <- pnew * (r_l/0.1);
+  pnew[pnew <= 0] <- 0.00001;
+  pnew[pnew >= 1] <- 1;
   seed <- seedsample(pr = pnew);
 if(sum(seed) == 0) {
   trees <- matrix(trees, ncol = 4);

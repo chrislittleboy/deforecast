@@ -1,7 +1,4 @@
-# calibration
-#' @title calibration
-#' @param params a data frame of all combinations to calibrate model
-#' @param x a 4 member list with ids, location of people, protected and unprotected trees
+
 
 calibration <- function(x, params, years, calibration_round){
 

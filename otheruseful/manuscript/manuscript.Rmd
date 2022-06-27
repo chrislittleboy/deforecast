@@ -1,0 +1,101 @@
+---
+title: "Climate agreements on deforestation"
+subtitle: "Seeing the wood for the trees"
+
+author: |
+  | Author 1^[Corresponding author: email@email.com] $^1$, Author 2 $^1$, Author 3 $^2$
+  | $^1$Affiliation1,  $^2$Affiliation2
+
+abstract: |
+  Forests 
+
+bibliography: references.bib
+
+output:
+  bookdown::pdf_document2:
+  toc: no
+fig_caption: yes
+
+always_allow_html: yes
+
+# These are LaTex settings to take care of floating figures/tables, line spacing, etc
+header-includes:
+  - \usepackage{endfloat}    
+  - \usepackage{setspace}\doublespacing
+  - \usepackage{lineno}
+  - \linenumbers
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(bookdown)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(sf)
+library(raster)
+```
+
+# Introduction
+
+Forests are key to a healthy planet. 
+They store carbon, protect biodiversity, clean the air, provide food and furniture.
+Protecting forests is increasingly recognised as being crucial to limit the negative impacts of climate change.
+So much so that the nations of the world agreed to end deforestation by 2030.
+
+In this article we predict what will happen to global forests in the coming years using a new simulation model.
+This over 16,000 protected areas and the surrounding forests, including x in the amazon, y in siberia, z in Indonesia.
+In total, this includes over a% of the world's forest cover.
+We find that current deforestation is x%.
+Without policy changes, forests will have shrunk by y% in 2030 and will continue doing so.
+And with policy changes, an x% increase in the area of protected forests or a y% increase in the budgets for protecting forests is crucial.
+
+And It will take 
+Rather than fuel the cynicism that political agreements cannot create meaningful change. 
+We see broad political consensus as an opportunity to change the way we manage forests for the better.
+
+
+# Methodology
+
+## Research questions
+
+## What is a protected forest
+
+## Creating model forests
+
+## Simulating deforestation
+
+## Model calibration
+
+# Results
+
+## Historical deforestation
+
+## Model performance
+
+## Future deforestataion
+
+## Future deforestation under different policy scenarios
+
+# Discussion
+
+## Theory of forest change
+
+Our model is underpinned by a specific theory of forest change -- that forests change over time due to incremental encroachment.
+There is an argument that forestry concessions -- areas of land 
+For example, DRC.
+Another argument says that forest losses are increasing due to move volatile climates.
+Neither of these factors are inncorporated in our simulation model.
+Nevertheless, the relative model perform
+
+## Forest protection policy
+
+# Conclusion
+
+
+
+
+
+
+

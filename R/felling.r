@@ -23,7 +23,7 @@ trees <-  cbind(
                  mobility = mobility)
 
 # new people
-  newpeople <- cbind(logged[,3:4])
+  newpeople <- matrix(cbind(logged[,3:4]), ncol = 2)
 # gets ids of felled trees
   felled <- logged[logged[,2] > 0,1]
 

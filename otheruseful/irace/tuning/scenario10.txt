@@ -1,0 +1,19 @@
+###################################################### -*- mode: r -*- #####
+## Scenario setup for Iterated Race (irace).
+############################################################################
+
+parameterFile = "./parameters.txt"
+execDir = "./results/C10"
+trainInstancesDir = "/home/chris/Documents/data/deforecast/processed/clusters/train/c10"
+maxExperiments = 1000
+digits = 3
+deterministic = 1
+seed = 123
+parallel = 6
+testInstancesDir = "/home/chris/Documents/data/deforecast/processed/clusters/test/c10"
+testNbElites = 3
+targetRunner = "/home/chris/bin/irace_deforecast.R"
+
+## END of scenario file
+############################################################################
+
