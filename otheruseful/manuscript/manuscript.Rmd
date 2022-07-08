@@ -58,13 +58,13 @@ We see broad political consensus as an opportunity to change the way we manage f
 
 # Methodology
 
-## Research questions
-
+## Research questions   
+  
 ## What is a protected forest
 
 ## Creating model forests
 
-## Simulating deforestation
+## Simulating deforestation as human/environment conflict
 
 ## Model calibration
 
